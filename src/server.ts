@@ -1,6 +1,8 @@
 import express from "express";
+import {Application, Request, Response, NextFunction, Errback} from "express";
 import bodyParser from "body-parser";
 import { filterImageFromURL, deleteLocalFiles } from "./util/util";
+import { nextTick } from "process";
 
 (async () => {
   // Init the Express application
@@ -32,22 +34,31 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
 
   // Root Endpoint
   // Displays a simple message to the user
-  app.get("/", async (req, res) => {
-    res.send("try GET /filteredimage?image_url={{URL}}");
+  app.get("/", async (req: Request, res: Response) => {
+    res.status(200).send("try GET /filteredimage?image_url={{URL}}");
   });
 
-  app.get("/filteredimage", async (req, res) => {
-    let { image_url } = req.query;
-    image_url.toString();
-    if (!image_url) {
-      res.status(400).send("Invalid url");
-      console.log("invalid or incorrect url");
-    } else {
-      let image = await filterImageFromURL(image_url);
-      res.status(200).sendFile(image, () => {
-        deleteLocalFiles([image]);
-      });
-    }
+  app.get("/filteredimage", async (req: Request, res: Response, next: NextFunction) => {
+    try{
+      let { image_url } = req.query;
+      if (!image_url) {
+        res.status(400).send("Invalid url");
+        console.log("invalid or incorrect url");
+      } else {
+        try{
+        let image: string = await filterImageFromURL(image_url) as string;
+        res.status(200).sendFile(image, () => {
+          deleteLocalFiles([image]);
+        });
+      }catch(e){
+        return next(e);
+      }
+      }
+    } catch(e){
+      return next(e);
+    }   
+
+
   });
 
   // Start the Server
