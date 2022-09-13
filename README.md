@@ -5,3 +5,6 @@ Udagram is a simple cloud application developed alongside the Udacity Cloud Engi
 [Elastic Beanstalk Endpoint Url](http://imagefilter-env.eba-xwryqshu.us-east-1.elasticbeanstalk.com)
 
 http://imagefilter-env.eba-xwryqshu.us-east-1.elasticbeanstalk.com
+
+# Github repository URL: 
+https://github.com/josh114/udacity-imagefilter
